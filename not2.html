@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کوینی راسان</title>
+    <link rel="stylesheet" href="images.jpg">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f0f0f0;
+        }
+
+        #score {
+            font-size: 24px;
+            margin: 20px;
+        }
+
+        #coins {
+            font-size: 24px;
+            margin: 20px;
+            color: gold;
+        }
+
+        #button {
+            font-size: 20px;
+            padding: 7px 7px;
+            cursor: pointer;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 100%;
+            
+        }
+
+        #button:hover {
+            background-color: #ffffff;
+        }
+
+        #convertButton {
+            font-size: 20px;
+            padding: 15px 30px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        #convertButton:hover {
+            background-color: #1E88E5;
+        }
+        body{
+            background-color: darkslategray;
+        }
+        h1,h2,h3,h4,h5,h6{
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>coiny rasan</h1>
+    <p id="score">امتیاز: 0</p>
+    <p id="coins">سکه‌ها: 0</p>
+    <p id="profile">پروفیت همه افراد ساعتی 1000 امتیاز است</p>
+    <button id="button" onclick="increaseScore()"><img src="/images.jpg" alt="" width="200px" style="border-radius: 100%;"></button>
+    <br>
+    <button id="convertButton" onclick="convertToCoins()">تبدیل امتیاز به سکه</button>
+
+    <script>
+        // بازیابی امتیاز ذخیره‌شده و تاریخ آخرین ورود از localStorage
+        let score = localStorage.getItem("score") ? parseInt(localStorage.getItem("score")) : 0;
+        let coins = localStorage.getItem("coins") ? parseFloat(localStorage.getItem("coins")) : 0;
+        let lastLogin = localStorage.getItem("lastLogin") ? parseInt(localStorage.getItem("lastLogin")) : Date.now();
+
+        // تابع برای محاسبه امتیاز اضافی بر اساس زمان گذشته
+        function calculateBonus() {
+            let currentTime = Date.now();
+            let timeDiff = currentTime - lastLogin;  // مدت زمان گذشته (بر حسب میلی‌ثانیه)
+            let hoursPassed = timeDiff / (1000 * 60 * 60);  // تبدیل به ساعت
+
+            // هر ساعت 10000 امتیاز به امتیاز فعلی اضافه کن
+            let bonus = Math.floor(hoursPassed) * 1000;
+
+            if (bonus > 0) {
+                score += bonus;
+                // بروزرسانی امتیاز در صفحه
+                document.getElementById("score").textContent = "امتیاز: " + score;
+                // نمایش پیام پروفایل
+                document.getElementById("profile").textContent = "پروفایل: " + bonus + " امتیاز اضافی به شما داده شده!";
+            }
+        }
+
+        // نمایش امتیاز اولیه
+        document.getElementById("score").textContent = "امتیاز: " + score;
+        document.getElementById("coins").textContent = "سکه‌ها: " + coins.toFixed(6);  // نمایش سکه‌ها به صورت اعشاری
+
+        // تابع برای افزایش امتیاز با کلیک کردن
+        function increaseScore() {
+            score++;
+            // به روز رسانی امتیاز در صفحه
+            document.getElementById("score").textContent = "امتیاز: " + score;
+            // ذخیره‌سازی امتیاز جدید در localStorage
+            localStorage.setItem("score", score);
+        }
+
+        // تابع برای تبدیل امتیاز به سکه
+        function convertToCoins() {
+            let coinsGained = score / 100000000;  // تبدیل امتیاز به تعداد سکه به صورت اعشاری
+            if (coinsGained > 0) {
+                // به روز رسانی تعداد سکه‌ها
+                coins += coinsGained;
+                // کاهش امتیاز معادل سکه‌های جدید
+                score = 0;
+
+                // بروزرسانی نمایش سکه‌ها و امتیاز
+                document.getElementById("coins").textContent = "سکه‌ها: " + coins.toFixed(6);  // نمایش به صورت اعشاری
+                document.getElementById("score").textContent = "امتیاز: " + score;
+
+                // ذخیره‌سازی سکه‌ها و امتیاز در localStorage
+                localStorage.setItem("coins", coins);
+                localStorage.setItem("score", score);
+            } else {
+                alert("برای تبدیل به سکه، به حداقل 100,000,000 امتیاز نیاز دارید.");
+            }
+        }
+
+        // ذخیره‌سازی تاریخ آخرین ورود و بروزرسانی آن در localStorage
+        function updateLastLogin() {
+            localStorage.setItem("lastLogin", Date.now());
+        }
+
+        // محاسبه امتیاز اضافی و بروزرسانی تاریخ ورود هنگام بارگذاری صفحه
+        calculateBonus();
+        updateLastLogin();
+    </script>
+
+</body>
+</html>
+
